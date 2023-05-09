@@ -20,6 +20,7 @@ class Post(models.Model):
     like = models.ManyToManyField(User, verbose_name="좋아요", related_name="like_posts")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
 
+
     def __str__(self):
         return str(self.title)
 
