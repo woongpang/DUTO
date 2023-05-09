@@ -23,9 +23,9 @@ class UserManager(BaseUserManager):
     def create_superuser(self, username, password=None):
         user = self.create_user(
             username=username,
-            email="admin@admin.com",
+            email="admin2@admin.com",
             password=password,
-            name="관리자",
+            name="관리자2",
             age="7",
             introduction="관리자 계정입니다"
         )
@@ -35,17 +35,17 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
-
     username = models.CharField("유저 아이디", max_length=20, unique=True)
     email = models.EmailField("이메일", max_length=255, unique=True)
     name = models.CharField("이름", max_length=20)
     age = models.IntegerField(
         "나이", validators=[MinValueValidator(7), MaxValueValidator(220)])
-    introduction = models.TextField("자기 소개")
-    followings = models.ManyToManyField("self",symmetrical=False, related_name='followers', blank=True)
+    introduction = models.CharField("자기 소개", max_length=255, blank=True)
+    
+    followings = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
-
+    
     objects = UserManager()
 
     USERNAME_FIELD = "username"
