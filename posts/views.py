@@ -46,6 +46,12 @@ class PostDetailView(APIView):
         # else:
         #     return Response("권한이 없습니다.", status=status.HTTP_405_METHOD_NOT_ALLOWED)
         
+        # if request.user == post.user:
+        #     post.user.is_active(False)
+        
+    # request.user.is_active = False
+    # request.user.save()
+        
 class PostLikesView(APIView):
     def post(self, request, post_id):
         post = get_object_or_404(Post, id=post_id)
