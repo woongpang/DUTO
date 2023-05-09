@@ -2,7 +2,14 @@ from django.db import models
 from users.models import User, MaxValueValidator, MinValueValidator
 
 
+class Category(models.Model):
+    name = models.CharField("카테고리명", max_length=20)
+    
+    def __str__(self):
+        return str(self.name)
+
 class Post(models.Model):
+    category = models.ForeignKey(Category, verbose_name="카테고리", on_delete=models.CASCAD)
     title = models.CharField("제목", max_length=100)
     content = models.TextField("내용")
     image = models.ImageField("사진", blank=True, null=True, upload_to='%Y/%m/%d')

@@ -2,15 +2,30 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 
 class PostView(APIView):
-    pass
+    def get(self, request):
+        """메인 페이지"""
+        pass
+    
 class StudyFeedView(APIView):
-    pass
+    def get(self, request):
+        """공부 게시판 글 목록 조회"""
+        pass
+    
 class StudyFollowView(APIView):
-    pass
+    def get(self, request):
+        """공부 게시판 팔로잉 게시글 목록 조회"""
+        pass
+
 class BreaktimeView(APIView):
-    pass
+    def get(self, request):
+        """휴식 게시판 글 목록 조회"""
+        pass
+    
 class BreaktimeFollowView(APIView):
-    pass
+    def get(self, request):
+        """휴식 게시판 팔로잉 게시글 목록 조회"""
+        pass
+    
 class PostDetailView(APIView):
     pass
 class PostLikesView(APIView):
