@@ -28,9 +28,16 @@ class CategoryView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class CategoryFollowView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     def get(self, request, category_name):
         """카테고리별 팔로잉 게시글 목록 조회"""
-        pass
+        q = Q()
+        for user in request.user.followings.all():
+            q.add(Q(user=user), q.OR)
+        following_posts = Post.objects.filter(q, category__name=category_name)
+        print(q)
+        serializer = PostListSerializer(following_posts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     
 class PostDetailView(APIView):
