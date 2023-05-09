@@ -22,7 +22,7 @@ class PostLikesView(APIView):
 class CommentsView(APIView):
     def get(self, request, post_id):
         posts = Post.objects.get(id=post_id)
-        comments = posts.comment_set.all()
+        comments = posts.comment_set.all() # Post를 참조하는 comment들의 집합(comment_set) 모두(.all)
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
