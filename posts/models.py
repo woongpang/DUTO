@@ -6,7 +6,7 @@ class Post(models.Model):
     title = models.CharField("제목", max_length=100)
     content = models.TextField("내용")
     image = models.ImageField("사진", blank=True, null=True, upload_to='%Y/%m/%d')
-    star = models.IntegerField("별점", validators=[MinValueValidator(1), MaxValueValidator(5)])
+    star = models.FloatField("별점", default=0, validators=[MinValueValidator(0,5), MaxValueValidator(0.5)])
     created_at = models.DateField("생성일", auto_now_add=True)
     updated_at = models.DateField("마지막 수정일", auto_now=True)
     like = models.ManyToManyField(User, verbose_name="좋아요", related_name='like_posts')
