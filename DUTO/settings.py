@@ -23,6 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 secret_file = os.path.join(BASE_DIR, 'secrets.json')
 
+AUTH_USER_MODEL = "users.User"
+
 with open(secret_file) as f:
     secrets = json.loads(f.read())
 
@@ -138,17 +140,18 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
+
 STATIC_ROOT = BASE_DIR / "static"
 STATIC_URL = "/static/"
 
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
 
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 AUTH_USER_MODEL = "users.User"
 
@@ -191,3 +194,4 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
+
