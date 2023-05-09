@@ -1,3 +1,4 @@
+from django.db.models.query_utils import Q
 from rest_framework.generics import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework import status, permissions
@@ -8,10 +9,39 @@ from posts.serializers import PostSerializer, PostListSerializer, PostCreateSeri
 
 class PostView(APIView):
     def get(self, request):
+        """메인 페이지"""
+        """
+        공부 카테고리에서 글 상위 10개(24시간 조회수 기준),
+        휴식 카테고리에서 글 상위 10개(24시간 조회수 기준),
+        공부 카테고리에서 글 상위 3개(좋아요 기준),
+        휴식 카테고리에서 글 상위 3개(좋아요 기준),
+        """
+
         posts = Post.objects.all()
         serializer = PostListSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+
+class CategoryView(APIView):
+    def get(self, request, category_name):
+        """카테고리별 글 목록 조회"""
+        posts = Post.objects.filter(category__name=category_name)
+        serializer = PostListSerializer(posts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class CategoryFollowView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def get(self, request, category_name):
+        """카테고리별 팔로잉 게시글 목록 조회"""
+        q = Q()
+        for user in request.user.followings.all():
+            q.add(Q(user=user), q.OR)
+        following_posts = Post.objects.filter(q, category__name=category_name)
+        print(q)
+        serializer = PostListSerializer(following_posts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class PostView(APIView):
     def post(self, request):
         serializer = PostCreateSerializer(data=request.data)
         if serializer.is_valid():
@@ -60,17 +90,8 @@ class PostLikesView(APIView):
             return Response("unfollow", status=status.HTTP_200_OK)
         else:
             post.likes.add(request.user)
-            return Response("follow", status=status.HTTP_200_OK)    
-        
-        
-class StudyFeedView(APIView):
-    pass
-class StudyFollowView(APIView):
-    pass
-class BreaktimeView(APIView):
-    pass
-class BreaktimeFollowView(APIView):
-    pass
+            return Response("follow", status=status.HTTP_200_OK)
+          
 class CommentsView(APIView):
     def get(self, request, post_id):
         posts = Post.objects.get(id=post_id)
