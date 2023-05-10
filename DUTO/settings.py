@@ -14,7 +14,8 @@ from pathlib import Path
 
 from datetime import timedelta
 
-import os, json
+import os
+import json
 from django.core.exceptions import ImproperlyConfigured
 
 
@@ -154,8 +155,6 @@ MEDIA_URL = "/media/"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-
-
 AUTH_USER_MODEL = "users.User"
 
 SIMPLE_JWT = {
@@ -197,5 +196,3 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
-
-

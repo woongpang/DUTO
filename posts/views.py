@@ -1,8 +1,8 @@
 from django.db.models.query_utils import Q
 from rest_framework.generics import get_object_or_404
 from rest_framework.views import APIView
-from rest_framework import status, permissions
 from rest_framework.response import Response
+from rest_framework import status, permissions
 from posts.models import Post, Comment
 from posts.serializers import PostSerializer, PostListSerializer, PostCreateSerializer, CommentSerializer, CommentCreateSerializer
 
@@ -23,7 +23,6 @@ class CategoryFollowView(APIView):
         for user in request.user.followings.all():
             q.add(Q(user=user), q.OR)
         following_posts = Post.objects.filter(q, category__name=category_name)
-        print(q)
         serializer = PostListSerializer(following_posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -58,42 +57,37 @@ class PostDetailView(APIView):
     def put(self, request, post_id):
         """게시글 수정"""
         post = get_object_or_404(Post, id=post_id)
-        # if request.user == post.user:
-        serializer = PostCreateSerializer(post, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        if request.user == post.user:
+            serializer = PostCreateSerializer(post, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    # else:
-    #     return Response("권한이 없습니다.", status=status.HTTP_405_METHOD_NOT_ALLOWED)
+            return Response("권한이 없습니다.", status=status.HTTP_403_FORBIDDEN)
     
     def delete(self, request, post_id):
         """게시글 삭제"""
         post = get_object_or_404(Post, id=post_id)
-        # if request.user == post.user:
-        #     post.delete()
-        #     return Response("삭제되었습니다", status=status.HTTP_204_NO_CONTENT)
-        # else:
-        #     return Response("권한이 없습니다.", status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        if request.user == post.user:
+            post.delete()
+            return Response("삭제되었습니다", status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response("권한이 없습니다.", status=status.HTTP_403_FORBIDDEN)
         
-        # if request.user == post.user:
-        #     post.user.is_active(False)
-        
-    # request.user.is_active = False
-    # request.user.save()
         
         
 class PostLikesView(APIView):
     def post(self, request, post_id):
         """게시글 좋아요 누르기"""
         post = get_object_or_404(Post, id=post_id)
-        if request.user in post.likes.all():
-            post.likes.remove(request.user)
-            return Response("unfollow", status=status.HTTP_200_OK)
+        if request.user in post.like.all():
+            post.like.remove(request.user)
+            return Response("좋아요 취소", status=status.HTTP_200_OK)
         else:
-            post.likes.add(request.user)
-            return Response("follow", status=status.HTTP_200_OK)
+            post.like.add(request.user)
+            return Response("좋아요", status=status.HTTP_200_OK)
           
           
 class CommentsView(APIView):
