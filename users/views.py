@@ -15,6 +15,7 @@ from django.db.models.query_utils import Q
 
 class UserView(APIView):
     def post(self, request):
+        """회원가입"""
         username = request.data.get('username')
         password1 = request.data.get('password1')
         password2 = request.data.get('password2')
@@ -32,16 +33,17 @@ class UserView(APIView):
         if User.objects.filter(email=email).exists():
             return Response({'error': '이미 사용 중인 이메일입니다.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        user = User.objects.create_user(username=username, password=password1, email=email, name=name, age=age,
-                                        introduction=introduction)
-        # profile = Profile.objects.create(user=user, name=name, age=age)
+        user = User.objects.create_user(username=username, password=password1, name=name, email=email, age=age, introduction=introduction)
+        # profile = User.objects.create(user=user, name=name, age=age)
+
         return Response({'success': '회원가입이 완료되었습니다.'}, status=status.HTTP_201_CREATED)
 
 class LoginView(TokenObtainPairView):
     """페이로드 커스터마이징"""
     serializer_class = LoginViewSerializer
     
-    def post(self, request, **kwargs):
+    def post(self, request):
+        """로그인"""
         try:
             username = request.data.get("username", "")
             password = request.data.get("password", "")
@@ -76,11 +78,13 @@ class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, user_id):
+        """프로필 조회"""
         user = get_object_or_404(User, id=user_id)
         serializer = UserProfileSerializer(user)
         return Response(serializer.data)
 
     def put(self, request, user_id):
+        """프로필 수정"""
         user = get_object_or_404(User, id=user_id)
         serializer = UserProfileSerializer(user, data=request.data)
         if serializer.is_valid():
@@ -91,6 +95,7 @@ class ProfileView(APIView):
 
 class FollowView(APIView):
     def post(self, request, user_id):
+        """팔로잉 하기"""
         you = get_object_or_404(User, id=user_id)
         me = request.user
         

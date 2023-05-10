@@ -9,6 +9,7 @@ class Category(models.Model):
     def __str__(self):
         return str(self.name)
 
+
 class Post(models.Model):  
     category = models.ForeignKey(Category, verbose_name="카테고리", on_delete=models.DO_NOTHING, related_name="category_posts")  
     title = models.CharField("제목", max_length=100)
@@ -19,7 +20,6 @@ class Post(models.Model):
     updated_at = models.DateTimeField("마지막 수정시간", auto_now=True)    
     like = models.ManyToManyField(User, verbose_name="좋아요", related_name="like_posts", blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
-
 
     def __str__(self):
         return str(self.title)
