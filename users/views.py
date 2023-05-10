@@ -72,11 +72,13 @@ class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, user_id):
+        """프로필 조회"""
         user = get_object_or_404(User, id=user_id)
         serializer = UserProfileSerializer(user)
         return Response(serializer.data)
 
     def put(self, request, user_id):
+        """프로필 수정"""
         user = get_object_or_404(User, id=user_id)
         serializer = UserProfileSerializer(user, data=request.data)
         if serializer.is_valid():
@@ -87,6 +89,7 @@ class ProfileView(APIView):
 
 class FollowView(APIView):
     def post(self, request, user_id):
+        """팔로잉 하기"""
         you = get_object_or_404(User, id=user_id)
         me = request.user
         
