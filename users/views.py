@@ -25,6 +25,8 @@ class UserView(APIView):
             return Response({'error': '비밀번호가 일치하지 않습니다.'}, status=status.HTTP_400_BAD_REQUEST)
         if User.objects.filter(username=username).exists():
             return Response({'error': '이미 사용 중인 아이디입니다.'}, status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(email=email).exists():
+            return Response({'error': '이미 사용 중인 이메일입니다.'}, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.create_user(username=username, password=password1, name=name, email=email, age=age, introduction=introduction)
         # profile = User.objects.create(user=user, name=name, age=age)
@@ -65,25 +67,23 @@ class LoginView(TokenObtainPairView):
             return response
         except AttributeError:
             return Response("email 또는 password가 다릅니다.", status=status.HTTP_403_FORBIDDEN)
-    
+
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        user = request.user
+    def get(self, request, user_id):
+        user = get_object_or_404(User, id=user_id)
         serializer = UserProfileSerializer(user)
         return Response(serializer.data)
 
-class ProfileUpdateView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def put(self, request):
-        user = request.user
+    def put(self, request, user_id):
+        user = get_object_or_404(User, id=user_id)
         serializer = UserProfileSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class FollowView(APIView):
     def post(self, request, user_id):
