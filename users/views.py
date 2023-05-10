@@ -5,8 +5,11 @@ from rest_framework.generics import get_object_or_404
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions
 from users.serializers import LoginViewSerializer, UserSerializer
+from posts.serializers import PostSerializer
 from users.models import User
+from posts.models import Post
 from django.contrib.auth import authenticate
+from django.db.models.query_utils import Q
 
 class UserView(APIView):
     pass
@@ -43,7 +46,7 @@ class LoginView(TokenObtainPairView):
             
             return response
         except AttributeError:
-            return Response("email 또는 password가 다릅니다.", status=status.HTTP_403_FORBIDDEN)
+            return Response("username 또는 password가 다릅니다.", status=status.HTTP_403_FORBIDDEN)
     
 class ProfileView(APIView):
     pass
@@ -59,8 +62,27 @@ class FollowView(APIView):
         else:
             you.followers.add(me)
             return Response("follow했습니다.",status=status.HTTP_200_OK)
+        
 
 class MypostsView(APIView):
-    pass
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get(self, request):
+        post = Post.objects.filter(user=request.user)
+        serializer = PostSerializer(post, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+        # q = Q()
+        # for user in request.user.posts.all():
+        #     q.add(Q(user=user), q.OR)
+        # posts = Post.objects.filter(q)
+        # serializer = PostSerializer(posts, many=True)
+        # return Response(serializer.data)
+    
 class LikesView(APIView):
-    pass
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get(self, request):
+        post = Post.objects.filter(like=request.user)
+        serializer = PostSerializer(post, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

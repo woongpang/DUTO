@@ -15,8 +15,7 @@ class PostListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ("category", "user", "title", "content",
-                  "image", "star", "like", "updated_at",)
+        fields = ("category", "user", "title", "content", "image", "star", "like", "updated_at",)
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -24,15 +23,14 @@ class PostSerializer(serializers.ModelSerializer):
     
     # def get_user(self, obj):
     #     return obj.user.username
-    
     class Meta:
         model = Post
-        fields = '__all__'
+        fields = "__all__"
         
 class PostCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ("title", "image", "content")
+        fields = ("category", "user", "title", "content", "image", "star", "like", "updated_at",)
 
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()

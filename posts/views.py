@@ -6,55 +6,25 @@ from rest_framework.response import Response
 from posts.models import Post, Comment
 from posts.serializers import PostSerializer, PostListSerializer, PostCreateSerializer, CommentSerializer, CommentCreateSerializer
 
-
-class PostView(APIView):
-    def get(self, request):
-        """메인 페이지"""
-        """
-        공부 카테고리에서 글 상위 10개(24시간 조회수 기준),
-        휴식 카테고리에서 글 상위 10개(24시간 조회수 기준),
-        공부 카테고리에서 글 상위 3개(좋아요 기준),
-        휴식 카테고리에서 글 상위 3개(좋아요 기준),
-        """
-
-        posts = Post.objects.all()
-        serializer = PostListSerializer(posts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-
-class CategoryView(APIView):
-    def get(self, request, category_name):
-        """카테고리별 글 목록 조회"""
-        posts = Post.objects.filter(category__name=category_name)
-        serializer = PostListSerializer(posts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-class CategoryFollowView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    def get(self, request, category_name):
-        """카테고리별 팔로잉 게시글 목록 조회"""
-        q = Q()
-        for user in request.user.followings.all():
-            q.add(Q(user=user), q.OR)
-        following_posts = Post.objects.filter(q, category__name=category_name)
-        print(q)
-        serializer = PostListSerializer(following_posts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
 class PostView(APIView):
     def post(self, request):
+        if not request.user.is_authenticated:
+            return Response({"message":"로그인 해주세요"}, 401)
+        
         serializer = PostCreateSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 class PostDetailView(APIView):
+    
     def get(self, request, post_id):
         post = get_object_or_404(Post, id=post_id)
         serializer = PostSerializer(post)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
     
     def put(self, request, post_id):
         post = get_object_or_404(Post, id=post_id)
@@ -85,13 +55,34 @@ class PostDetailView(APIView):
 class PostLikesView(APIView):
     def post(self, request, post_id):
         post = get_object_or_404(Post, id=post_id)
-        if request.user in post.likes.all():
-            post.likes.remove(request.user)
-            return Response("unfollow", status=status.HTTP_200_OK)
+        if request.user in post.like.all():
+            post.like.remove(request.user)
+            return Response("좋아요 취소", status=status.HTTP_200_OK)
         else:
-            post.likes.add(request.user)
-            return Response("follow", status=status.HTTP_200_OK)
-          
+            post.like.add(request.user)
+            return Response("좋아요", status=status.HTTP_200_OK)
+        
+        
+class CategoryView(APIView):
+    def get(self, request, category_name):
+        """카테고리별 글 목록 조회"""
+        posts = Post.objects.filter(category__name=category_name)
+        serializer = PostListSerializer(posts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class CategoryFollowView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def get(self, request, category_name):
+        """카테고리별 팔로잉 게시글 목록 조회"""
+        q = Q()
+        for user in request.user.followings.all():
+            q.add(Q(user=user), q.OR)
+        following_posts = Post.objects.filter(q, category__name=category_name)
+        print(q)
+        serializer = PostListSerializer(following_posts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        
 class CommentsView(APIView):
     def get(self, request, post_id):
         posts = Post.objects.get(id=post_id)
