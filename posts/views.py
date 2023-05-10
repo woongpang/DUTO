@@ -6,7 +6,6 @@ from rest_framework import status, permissions
 from posts.models import Post, Comment
 from posts.serializers import PostSerializer, PostListSerializer, PostCreateSerializer, CommentSerializer, CommentCreateSerializer
 
-
 class CategoryView(APIView):
     def get(self, request, category_name):
         """카테고리별 글 목록 조회"""
@@ -26,7 +25,6 @@ class CategoryFollowView(APIView):
         serializer = PostListSerializer(following_posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
 class PostView(APIView):
     def get(self, request):
         """메인 페이지"""
@@ -40,6 +38,9 @@ class PostView(APIView):
     
     def post(self, request):
         """게시글 작성"""
+        if not request.user.is_authenticated:
+            return Response({"message":"로그인 해주세요"}, 401)
+          
         serializer = PostCreateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
@@ -48,11 +49,13 @@ class PostView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 class PostDetailView(APIView):
+    
     def get(self, request, post_id):
         """게시글 상세페이지 조회"""
         post = get_object_or_404(Post, id=post_id)
         serializer = PostSerializer(post)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
     
     def put(self, request, post_id):
         """게시글 수정"""
@@ -88,8 +91,7 @@ class PostLikesView(APIView):
         else:
             post.like.add(request.user)
             return Response("좋아요", status=status.HTTP_200_OK)
-          
-          
+
 class CommentsView(APIView):
     def get(self, request, post_id):
         """댓글 보기"""

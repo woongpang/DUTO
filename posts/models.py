@@ -18,7 +18,7 @@ class Post(models.Model):
     star = models.IntegerField("별점", validators=[MinValueValidator(1), MaxValueValidator(5)])
     created_at = models.DateTimeField("생성시간", auto_now_add=True)
     updated_at = models.DateTimeField("마지막 수정시간", auto_now=True)    
-    like = models.ManyToManyField(User, verbose_name="좋아요", related_name="like_posts")
+    like = models.ManyToManyField(User, verbose_name="좋아요", related_name="like_posts", blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
 
     def __str__(self):
@@ -27,8 +27,7 @@ class Post(models.Model):
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(
-        Post, on_delete=models.CASCADE, related_name="comments")
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
