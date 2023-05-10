@@ -9,7 +9,8 @@ from users.models import User
 from django.contrib.auth import authenticate
 
 class UserView(APIView):
-    def signup(self, request):
+    def post(self, request):
+        """회원가입"""
         username = request.data.get('username')
         password1 = request.data.get('password1')
         password2 = request.data.get('password2')
@@ -25,8 +26,8 @@ class UserView(APIView):
         if User.objects.filter(username=username).exists():
             return Response({'error': '이미 사용 중인 아이디입니다.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        user = User.objects.create_user(username=username, password=password1, email=email)
-        profile = UserProfile.objects.create(user=user, name=name, age=age)
+        user = User.objects.create_user(username=username, password=password1, name=name, email=email, age=age, introduction=introduction)
+        # profile = User.objects.create(user=user, name=name, age=age)
 
         return Response({'success': '회원가입이 완료되었습니다.'}, status=status.HTTP_201_CREATED)
 
@@ -35,6 +36,7 @@ class LoginView(TokenObtainPairView):
     serializer_class = LoginViewSerializer
     
     def post(self, request):
+        """로그인"""
         try:
             username = request.data.get("username", "")
             password = request.data.get("password", "")
