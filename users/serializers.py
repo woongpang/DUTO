@@ -27,3 +27,8 @@ class LoginViewSerializer(TokenObtainPairSerializer):
         token['age'] = user.age
 
         return token
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'name', 'age', 'introduction']

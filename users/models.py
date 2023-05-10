@@ -51,6 +51,10 @@ class User(AbstractBaseUser):
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = []
 
+    def delete(self, using=None, keep_parents=False):
+        self.is_active = False
+        self.save()
+
     def __str__(self):
         return self.username
 
