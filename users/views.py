@@ -73,13 +73,14 @@ class LoginView(TokenObtainPairView):
             return Response("username 또는 password가 다릅니다.", status=status.HTTP_403_FORBIDDEN)
     
 class UserDeleteView(APIView):
+    """회원탈퇴"""
     permission_classes = [IsAuthenticated]
 
     def delete(self, request):
         user = request.user
         user.is_active = False
         user.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response("회원탈퇴가 완료되었습니다", status=status.HTTP_204_NO_CONTENT)
 
 
 class ProfileView(APIView):
