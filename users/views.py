@@ -7,7 +7,6 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions
 from users.serializers import LoginViewSerializer, UserSerializer, UserProfileSerializer
 from posts.serializers import PostSerializer
-
 from users.models import User
 from posts.models import Post
 from django.contrib.auth import authenticate
@@ -73,6 +72,15 @@ class LoginView(TokenObtainPairView):
         except AttributeError:
             return Response("username 또는 password가 다릅니다.", status=status.HTTP_403_FORBIDDEN)
     
+class UserDeleteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        user = request.user
+        user.is_active = False
+        user.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
