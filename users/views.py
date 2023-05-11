@@ -23,8 +23,8 @@ class UserView(APIView):
         age = request.data.get('age')
         introduction = request.data.get('introduction')
 
-        if not (username and password1 and password2 and name and email and age and introduction):
-            return Response({'error': '모든 값을 입력해주세요.'}, status=status.HTTP_400_BAD_REQUEST)
+        if not (username and password1 and password2 and email):
+            return Response({'error': '아이디, 비밀번호, 이메일은 필수값입니다.'}, status=status.HTTP_400_BAD_REQUEST)
         if password1 != password2:
             return Response({'error': '비밀번호가 일치하지 않습니다.'}, status=status.HTTP_400_BAD_REQUEST)
         if User.objects.filter(username=username).exists():
@@ -32,8 +32,7 @@ class UserView(APIView):
         if User.objects.filter(email=email).exists():
             return Response({'error': '이미 사용 중인 이메일입니다.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        user = User.objects.create_user(username=username, password=password1, name=name, email=email, age=age, introduction=introduction)
-        # profile = User.objects.create(user=user, name=name, age=age)
+        User.objects.create_user(username=username, password=password1, name=name, email=email, age=age, introduction=introduction)
 
         return Response({'success': '회원가입이 완료되었습니다.'}, status=status.HTTP_201_CREATED)
 
@@ -41,36 +40,6 @@ class LoginView(TokenObtainPairView):
     """페이로드 커스터마이징"""
     serializer_class = LoginViewSerializer
     
-    def post(self, request):
-        """로그인"""
-        try:
-            username = request.data.get("username", "")
-            password = request.data.get("password", "")
-            
-            user = authenticate(request, username=username, password=password)
-            
-            user_serializer = UserSerializer(user)
-            token = LoginViewSerializer.get_token(user)
-            refresh_token = str(token)
-            access_token = str(token.access_token)
-            
-            response = Response(
-                {
-                    "message" : "로그인 성공",
-                    "id" : user_serializer.data["id"],
-                    "username" : user_serializer.data["username"],
-                    "email" : user_serializer.data["email"],
-                    "follower" : user_serializer.data["followings"],
-                    "token" : {
-                        "refresh" : refresh_token,
-                        "access" : access_token,
-                    }
-                }
-            )
-            
-            return response
-        except AttributeError:
-            return Response("username 또는 password가 다릅니다.", status=status.HTTP_403_FORBIDDEN)
     
 class UserDeleteView(APIView):
     """회원탈퇴"""
