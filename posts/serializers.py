@@ -19,10 +19,30 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         fields = ('comment',)
 
 
+class MainPostSerializer(serializers.ModelSerializer):
+    category = serializers.SerializerMethodField()
+    like_count = serializers.SerializerMethodField()
+    comments_count = serializers.SerializerMethodField()
+
+    def get_category(self, obj):
+        return obj.category.name
+
+    def get_like_count(self, obj):
+        return obj.like.count()
+
+    def get_comments_count(self, obj):
+        return obj.comments.count()
+
+    class Meta:
+        model = Post
+        fields = ("category", "title", "comments_count",
+                  "like_count", "created_at")
+
+
 class PostListSerializer(serializers.ModelSerializer):
     category = serializers.SerializerMethodField()
     user = serializers.SerializerMethodField()
-    like = serializers.StringRelatedField(many=True)
+    like_count = serializers.SerializerMethodField()
 
     def get_category(self, obj):
         return obj.category.name
@@ -33,7 +53,7 @@ class PostListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ("pk", "category", "user", "title", "content",
-                  "image", "star", "like", "updated_at",)
+                  "image", "star", "like_count", "updated_at",)
 
 
 class PostSerializer(serializers.ModelSerializer):

@@ -4,7 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from posts.models import Post, Comment
-from posts.serializers import PostSerializer, PostListSerializer, PostCreateSerializer, CommentSerializer, CommentCreateSerializer
+from posts.serializers import MainPostSerializer, PostSerializer, PostListSerializer, PostCreateSerializer, CommentSerializer, CommentCreateSerializer
+from itertools import chain
 
 class CategoryView(APIView):
     def get(self, request, category_name):
@@ -29,12 +30,19 @@ class PostView(APIView):
     def get(self, request):
         """메인 페이지"""
         """
-        공부 카테고리에서 글 상위 10개(24시간 조회수 기준),
-        휴식 카테고리에서 글 상위 10개(24시간 조회수 기준),
+        공부 카테고리에서 글 최신순 10개,
+        휴식 카테고리에서 글 최신순 10개,
         공부 카테고리에서 글 상위 3개(좋아요 기준),
         휴식 카테고리에서 글 상위 3개(좋아요 기준),
         """
-        pass
+        posts1 = Post.objects.filter(category=1).order_by("-like")[:3]
+        posts2 = Post.objects.filter(category=2).order_by("-like")[:3]
+        posts3 = Post.objects.filter(category=1).order_by("-created_at")[:10]
+        posts4 = Post.objects.filter(category=2).order_by("-created_at")[:10]
+        posts = chain(posts1, posts2, posts3, posts4)
+        serializer = MainPostSerializer(posts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     
     def post(self, request):
         """게시글 작성"""
