@@ -96,7 +96,7 @@ class CommentsView(APIView):
     def get(self, request, post_id):
         """댓글 보기"""
         posts = Post.objects.get(id=post_id)
-        comments = posts.comment_set.all() # Post를 참조하는 comment들의 집합(comment_set) 모두(.all)
+        comments = posts.comments.all() # Post를 참조하는 comment들의 집합(comments) 모두(.all)
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
