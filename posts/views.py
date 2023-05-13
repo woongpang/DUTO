@@ -69,7 +69,7 @@ class PostDetailView(APIView):
         """게시글 수정"""
         post = get_object_or_404(Post, id=post_id)
         if request.user == post.user:
-            serializer = PostCreateSerializer(post, data=request.data)
+            serializer = PostCreateSerializer(post, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)

@@ -66,11 +66,15 @@ class ProfileView(APIView):
     def put(self, request, user_id):
         """프로필 수정"""
         user = get_object_or_404(User, id=user_id)
-        serializer = UserProfileSerializer(user, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if user == request.user:            
+            serializer = UserProfileSerializer(user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"message":"권한이 없습니다"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class FollowView(APIView):

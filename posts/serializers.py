@@ -50,6 +50,9 @@ class PostListSerializer(serializers.ModelSerializer):
     def get_user(self, obj):
         return obj.user.username
 
+    def get_like_count(self, obj):
+        return obj.like.count()
+
     class Meta:
         model = Post
         fields = ("pk", "category", "user", "title", "content",
