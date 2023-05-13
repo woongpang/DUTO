@@ -1,4 +1,4 @@
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
@@ -13,6 +13,8 @@ from django.contrib.auth import authenticate
 from django.db.models.query_utils import Q
 
 class UserView(APIView):
+    serializer_class = UserSerializer
+
     def post(self, request):
         """회원가입"""
         username = request.data.get('username')
