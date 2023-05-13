@@ -1,0 +1,14 @@
+[
+  {
+    "model": "posts.category",
+    "fields": {
+      "name": "study"
+    }
+  },
+  {
+    "model": "posts.category",
+    "fields": {
+      "name": "rest"
+    }
+  }
+]

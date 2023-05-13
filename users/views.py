@@ -38,6 +38,7 @@ class UserView(APIView):
 
         return Response({'success': '회원가입이 완료되었습니다.'}, status=status.HTTP_201_CREATED)
 
+
 class LoginView(TokenObtainPairView):
     """페이로드 커스터마이징"""
     serializer_class = LoginViewSerializer
@@ -66,11 +67,15 @@ class ProfileView(APIView):
     def put(self, request, user_id):
         """프로필 수정"""
         user = get_object_or_404(User, id=user_id)
-        serializer = UserProfileSerializer(user, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if user == request.user:            
+            serializer = UserProfileSerializer(user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"message":"권한이 없습니다"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class FollowView(APIView):
@@ -101,6 +106,7 @@ class MypostsView(APIView):
         # posts = Post.objects.filter(q)
         # serializer = PostSerializer(posts, many=True)
         # return Response(serializer.data)
+    
     
 class LikesView(APIView):
     permission_classes = [permissions.IsAuthenticated]
