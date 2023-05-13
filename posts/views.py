@@ -26,23 +26,13 @@ class CategoryFollowView(APIView):
         serializer = PostListSerializer(following_posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 class PostView(APIView):
     def get(self, request):
         """메인 페이지"""
-        """
-        공부 카테고리에서 글 최신순 10개,
-        휴식 카테고리에서 글 최신순 10개,
-        공부 카테고리에서 글 상위 3개(좋아요 기준),
-        휴식 카테고리에서 글 상위 3개(좋아요 기준),
-        """
-        posts1 = Post.objects.filter(category=1).order_by("-like")[:3]
-        posts2 = Post.objects.filter(category=2).order_by("-like")[:3]
-        posts3 = Post.objects.filter(category=1).order_by("-created_at")[:10]
-        posts4 = Post.objects.filter(category=2).order_by("-created_at")[:10]
-        posts = chain(posts1, posts2, posts3, posts4)
+        posts = Post.objects.All()[:10]
         serializer = MainPostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
     
     def post(self, request):
         """게시글 작성"""
@@ -56,6 +46,7 @@ class PostView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
+        
 class PostDetailView(APIView):
     
     def get(self, request, post_id):
@@ -63,8 +54,7 @@ class PostDetailView(APIView):
         post = get_object_or_404(Post, id=post_id)
         serializer = PostSerializer(post)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    
+        
     def put(self, request, post_id):
         """게시글 수정"""
         post = get_object_or_404(Post, id=post_id)
@@ -87,8 +77,7 @@ class PostDetailView(APIView):
         else:
             return Response("권한이 없습니다.", status=status.HTTP_403_FORBIDDEN)
         
-        
-        
+                
 class PostLikesView(APIView):
     def post(self, request, post_id):
         """게시글 좋아요 누르기"""
@@ -99,6 +88,7 @@ class PostLikesView(APIView):
         else:
             post.like.add(request.user)
             return Response("좋아요", status=status.HTTP_200_OK)
+
 
 class CommentsView(APIView):
     def get(self, request, post_id):

@@ -38,6 +38,7 @@ class UserView(APIView):
 
         return Response({'success': '회원가입이 완료되었습니다.'}, status=status.HTTP_201_CREATED)
 
+
 class LoginView(TokenObtainPairView):
     """페이로드 커스터마이징"""
     serializer_class = LoginViewSerializer
@@ -105,6 +106,7 @@ class MypostsView(APIView):
         # posts = Post.objects.filter(q)
         # serializer = PostSerializer(posts, many=True)
         # return Response(serializer.data)
+    
     
 class LikesView(APIView):
     permission_classes = [permissions.IsAuthenticated]
