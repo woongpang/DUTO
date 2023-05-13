@@ -19,9 +19,16 @@ class CategoryFollowView(APIView):
     def get(self, request, category_name):
         """카테고리별 팔로잉 게시글 목록 조회"""
         q = Q()
-        for user in request.user.followings.all():
-            q.add(Q(user=user), q.OR)
-        following_posts = Post.objects.filter(q, category__name=category_name)
+        followings = request.user.followings.all()
+        if followings:
+            for user in followings:            
+                q.add(Q(user=user), q.OR)
+            following_posts = Post.objects.filter(q, category__name = category_name)
+        else:
+            following_posts = []
+
+        
+        print(following_posts)
         serializer = PostListSerializer(following_posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
