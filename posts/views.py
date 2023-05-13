@@ -26,7 +26,6 @@ class CategoryFollowView(APIView):
             following_posts = Post.objects.filter(q, category__name = category_name)
         else:
             following_posts = []
-
         
         print(following_posts)
         serializer = PostListSerializer(following_posts, many=True)
@@ -36,7 +35,7 @@ class CategoryFollowView(APIView):
 class PostView(APIView):
     def get(self, request):
         """메인 페이지"""
-        posts = Post.objects.all()[:10]
+        posts = Post.objects.all().order_by("-created_at")[:10]
         serializer = PostListSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
