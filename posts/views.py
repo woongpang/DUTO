@@ -4,8 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from posts.models import Post, Comment
-from posts.serializers import MainPostSerializer, PostSerializer, PostListSerializer, PostCreateSerializer, CommentSerializer, CommentCreateSerializer
-from itertools import chain
+from posts.serializers import PostSerializer, PostListSerializer, PostCreateSerializer, CommentSerializer, CommentCreateSerializer
 
 class CategoryView(APIView):
     def get(self, request, category_name):
@@ -30,8 +29,8 @@ class CategoryFollowView(APIView):
 class PostView(APIView):
     def get(self, request):
         """메인 페이지"""
-        posts = Post.objects.All()[:10]
-        serializer = MainPostSerializer(posts, many=True)
+        posts = Post.objects.all()[:10]
+        serializer = PostListSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request):
