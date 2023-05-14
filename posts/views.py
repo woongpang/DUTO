@@ -4,8 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from posts.models import Post, Comment
-from posts.serializers import MainPostSerializer, PostSerializer, PostListSerializer, PostCreateSerializer, CommentSerializer, CommentCreateSerializer
-from itertools import chain
+from posts.serializers import PostSerializer, PostListSerializer, PostCreateSerializer, CommentSerializer, CommentCreateSerializer
 
 class CategoryView(APIView):
     def get(self, request, category_name):
@@ -20,9 +19,15 @@ class CategoryFollowView(APIView):
     def get(self, request, category_name):
         """카테고리별 팔로잉 게시글 목록 조회"""
         q = Q()
-        for user in request.user.followings.all():
-            q.add(Q(user=user), q.OR)
-        following_posts = Post.objects.filter(q, category__name=category_name)
+        followings = request.user.followings.all()
+        if followings:
+            for user in followings:            
+                q.add(Q(user=user), q.OR)
+            following_posts = Post.objects.filter(q, category__name = category_name)
+        else:
+            following_posts = []
+        
+        print(following_posts)
         serializer = PostListSerializer(following_posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -30,8 +35,8 @@ class CategoryFollowView(APIView):
 class PostView(APIView):
     def get(self, request):
         """메인 페이지"""
-        posts = Post.objects.All()[:10]
-        serializer = MainPostSerializer(posts, many=True)
+        posts = Post.objects.all().order_by("-created_at")[:10]
+        serializer = PostListSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request):
