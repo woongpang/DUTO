@@ -36,7 +36,7 @@ class PostView(APIView):
     def get(self, request):
         """메인 페이지"""
         
-        posts = Post.objects.all()[:10]
+        posts = Post.objects.all().order_by("-created_at")[:12]
         serializer = PostListSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
