@@ -18,8 +18,10 @@ class Post(models.Model):
     star = models.IntegerField("별점", validators=[MinValueValidator(1), MaxValueValidator(5)])
     created_at = models.DateTimeField("생성시간", auto_now_add=True)
     updated_at = models.DateTimeField("마지막 수정시간", auto_now=True)    
-    like = models.ManyToManyField(User, verbose_name="좋아요", related_name="like_posts", blank=True)
+    like = models.ManyToManyField(User, verbose_name="좋아요", related_name="like_posts")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
+    
+    
 
     def __str__(self):
         return str(self.title)
