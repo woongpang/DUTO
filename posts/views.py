@@ -116,7 +116,7 @@ class CommentsView(APIView):
         
         
 class CommentsDetailView(APIView):
-    def put(self, request, post_id, comment_id):
+    def put(self, request, comment_id):
         """댓글 수정"""
         comment = get_object_or_404(Comment, id=comment_id)
         if request.user == comment.user:        
@@ -129,7 +129,7 @@ class CommentsDetailView(APIView):
         else:
             return Response('권한이 없습니다!', status=status.HTTP_403_FORBIDDEN)    
 
-    def delete(self, request, post_id, comment_id):
+    def delete(self, request, comment_id):
         """댓글 삭제"""
         comment = get_object_or_404(Comment, id=comment_id)
         if request.user == comment.user:
