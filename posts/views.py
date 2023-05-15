@@ -37,7 +37,7 @@ class PostView(APIView):
         """메인 페이지"""
         
         posts = Post.objects.all()[:10]
-        serializer = MainPostSerializer(posts, many=True)
+        serializer = PostListSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request):
