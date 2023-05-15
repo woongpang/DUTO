@@ -88,10 +88,10 @@ class FollowView(APIView):
         print(you)
         if me in you.followers.all():
             you.followers.remove(me)
-            return Response("unfollow했습니다.",status=status.HTTP_200_OK)
+            return Response("unfollow",status=status.HTTP_200_OK)
         else:
             you.followers.add(me)
-            return Response("follow했습니다.",status=status.HTTP_200_OK)
+            return Response("follow",status=status.HTTP_200_OK)
         
 
 class MypostsView(APIView):

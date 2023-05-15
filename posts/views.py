@@ -90,10 +90,10 @@ class PostLikesView(APIView):
         post = get_object_or_404(Post, id=post_id)
         if request.user in post.like.all():
             post.like.remove(request.user)
-            return Response("좋아요 취소", status=status.HTTP_200_OK)
+            return Response("dislike", status=status.HTTP_200_OK)
         else:
             post.like.add(request.user)
-            return Response("좋아요", status=status.HTTP_200_OK)
+            return Response("like", status=status.HTTP_200_OK)
         
         
 
