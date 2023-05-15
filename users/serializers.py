@@ -43,6 +43,7 @@ class LoginViewSerializer(TokenObtainPairSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     followings = serializers.StringRelatedField(many=True)
+    
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'name', 'age', 'introduction', 'followings']
