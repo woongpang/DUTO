@@ -9,7 +9,7 @@ from posts.serializers import PostSerializer, PostListSerializer, PostCreateSeri
 class CategoryView(APIView):
     def get(self, request, category_name):
         """카테고리별 글 목록 조회"""
-        posts = Post.objects.filter(category__name=category_name)
+        posts = Post.objects.filter(category__name=category_name).order_by("-created_at")
         serializer = PostListSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -23,7 +23,7 @@ class CategoryFollowView(APIView):
         if followings:
             for user in followings:            
                 q.add(Q(user=user), q.OR)
-            following_posts = Post.objects.filter(q, category__name = category_name)
+            following_posts = Post.objects.filter(q, category__name = category_name).order_by("-created_at")
         else:
             following_posts = []
         

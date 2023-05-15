@@ -79,9 +79,9 @@ class ProfileView(APIView):
 
 
 class FollowView(APIView):
-    def post(self, request, user_id):
+    def post(self, request, user_name):
         """팔로잉 하기"""
-        you = get_object_or_404(User, id=user_id)
+        you = get_object_or_404(User, username=user_name)
         me = request.user
         
         if me in you.followers.all():
