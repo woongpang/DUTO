@@ -75,3 +75,8 @@ class PostCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ("category", "title", "image", "content", "star")
+
+# class LikeCount(serializers.ModelSerializer):
+#     class Meta:
+#         model = Post
+#         fields = "__all__"

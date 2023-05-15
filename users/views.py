@@ -79,11 +79,13 @@ class ProfileView(APIView):
 
 
 class FollowView(APIView):
-    def post(self, request, user_id):
+    def post(self, request, user_name):
         """팔로잉 하기"""
-        you = get_object_or_404(User, id=user_id)
+        you = get_object_or_404(User, username=user_name)
         me = request.user
-        
+        print(user_name)
+        print(me)
+        print(you)
         if me in you.followers.all():
             you.followers.remove(me)
             return Response("unfollow했습니다.",status=status.HTTP_200_OK)

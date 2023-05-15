@@ -30,7 +30,7 @@ class CategoryFollowView(APIView):
 class PostView(APIView):
     def get(self, request):
         """메인 페이지"""
-        posts = Post.objects.All()[:10]
+        posts = Post.objects.all()[:10]
         serializer = MainPostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -88,7 +88,8 @@ class PostLikesView(APIView):
         else:
             post.like.add(request.user)
             return Response("좋아요", status=status.HTTP_200_OK)
-
+        
+        
 
 class CommentsView(APIView):
     def get(self, request, post_id):
