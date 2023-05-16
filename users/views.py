@@ -1,4 +1,4 @@
-from rest_framework import status, generics
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
@@ -9,8 +9,6 @@ from users.serializers import LoginViewSerializer, UserSerializer, UserProfileSe
 from posts.serializers import PostSerializer
 from users.models import User
 from posts.models import Post
-from django.contrib.auth import authenticate
-from django.db.models.query_utils import Q
 
 class UserView(APIView):
     serializer_class = UserSerializer
@@ -83,9 +81,6 @@ class FollowView(APIView):
         """팔로잉 하기"""
         you = get_object_or_404(User, username=user_name)
         me = request.user
-        print(user_name)
-        print(me)
-        print(you)
         if me in you.followers.all():
             you.followers.remove(me)
             return Response("unfollow",status=status.HTTP_200_OK)
@@ -98,6 +93,7 @@ class MypostsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request):
+        """내가 쓴 글 조회"""
         post = Post.objects.filter(user=request.user)
         serializer = PostSerializer(post, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -114,6 +110,7 @@ class LikesView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request):
+        """내가 좋아요 한 글 조회"""
         post = Post.objects.filter(like=request.user)
         serializer = PostSerializer(post, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

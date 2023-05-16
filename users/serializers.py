@@ -5,7 +5,6 @@ from django.contrib.auth.hashers import make_password
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 
-
 class UserSerializer(serializers.ModelSerializer):
     followings = serializers.StringRelatedField(many=True)
     email = serializers.EmailField()
@@ -25,10 +24,18 @@ class UserSerializer(serializers.ModelSerializer):
             return email
         except ValidationError:
             raise serializers.ValidationError('유효하지 않은 이메일 형식입니다.')
+        
+
+class UserSerializer(serializers.ModelSerializer):
+    followings = serializers.StringRelatedField(many=True)
+    email = serializers.EmailField()
+
+    class Meta:
+        model = User
+        fields = '__all__'
 
 
-class LoginViewSerializer(TokenObtainPairSerializer):
-    
+class LoginViewSerializer(TokenObtainPairSerializer):    
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)

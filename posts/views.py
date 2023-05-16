@@ -34,8 +34,7 @@ class CategoryFollowView(APIView):
 
 class PostView(APIView):
     def get(self, request):
-        """메인 페이지"""
-        
+        """메인 페이지"""        
         posts = Post.objects.all().order_by("-created_at")[:12]
         serializer = PostListSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -53,8 +52,7 @@ class PostView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
         
-class PostDetailView(APIView):
-    
+class PostDetailView(APIView):    
     def get(self, request, post_id):
         """게시글 상세페이지 조회"""
         post = get_object_or_404(Post, id=post_id)
@@ -96,7 +94,6 @@ class PostLikesView(APIView):
             return Response("like", status=status.HTTP_200_OK)
         
         
-
 class CommentsView(APIView):
     def get(self, request, post_id):
         """댓글 보기"""
