@@ -34,6 +34,16 @@ DRF를 이용한 커뮤니티 사이트
 - vscode 확장팩 <Live Server> 설치
 - index.html에서 마우스 우클릭 후 Open with Live Server 클릭(단축키 Alt+L+O)
 
+### ⚙️ 개발 환경
+- `Python 3.11`
+- **IDE** : visual studio code, pycharm
+- **Framework** : Django-Rest-Framework
+- **Workbench** : MySQL Workbench 8.0 CE
+- **Database** : Mysql DB(6.4.5)
+- 그외 : **requirements.txt** : https://github.com/madonghwi/DUTO/blob/main/requirements.txt 참조
+- **FRONT-END** : https://github.com/madonghwi/front
+
+
 ## 📌 주요 기능
 #### 로그인 
 - DB값 검증
