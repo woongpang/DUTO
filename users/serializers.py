@@ -43,7 +43,11 @@ class LoginViewSerializer(TokenObtainPairSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     followings = serializers.StringRelatedField(many=True)
+    like_posts = serializers.SerializerMethodField()
     
+    def get_like_posts(self, obj):
+        return list(obj.like_posts.values())
+        
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'name', 'age', 'introduction', 'followings']
+        fields = ['id', 'username', 'email', 'name', 'age', 'introduction', 'followings', 'like_posts']
