@@ -1,4 +1,4 @@
-# Backend - <a href="https://github.com/goodminjeong/AI-5_A4_DUTO_Frontend">Frontend 바로가기!</a>
+# Backend - <a href="https://github.com/woongpang/DUTO_front">Frontend 바로가기!</a>
 # Django-rest-framework-Project-Two Rabbits
 DRF를 이용한 커뮤니티 사이트
 
